@@ -48,6 +48,7 @@ function ResultCard({ result, isOwnResult }: ResultCardProps) {
             width={320}
             height={560}
             className="mx-auto h-auto w-full max-w-[280px] object-contain"
+            unoptimized
           />
           <div className="absolute bottom-6 right-6 h-32 w-32 overflow-hidden rounded-2xl border-4 border-white shadow-xl">
             <Image src={result.profile_image_url} alt={`${result.username} composite`} fill className="object-cover" sizes="128px" />
