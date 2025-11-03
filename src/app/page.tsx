@@ -88,3 +88,19 @@ export default function HomePage() {
 
         <ResultsBoard currentUserResult={currentResult} others={visibleOthers} />
       </div>
+
+      <EntryModal
+        isOpen={isModalOpen}
+        isSubmitting={isSubmitting}
+        errorMessage={errorMessage}
+        onSubmit={handleSubmit}
+      />
+
+      {!isInitialised ? (
+        <div className="fixed inset-0 z-10 flex items-center justify-center bg-white/80 text-slate-500">
+          Connecting to Sentient…
+        </div>
+      ) : null}
+    </main>
+  );
+}
