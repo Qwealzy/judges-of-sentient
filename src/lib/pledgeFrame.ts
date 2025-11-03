@@ -1,5 +1,5 @@
 import type { StaticImageData } from 'next/image';
-import localPledgeFrame from '@/assets/pledge-frame.png';
+import localPledgeFrame from '@/assets/pledge-frame.PNG';
 
 const remoteAsset = process.env.NEXT_PUBLIC_PLEDGE_FRAME_ASSET;
 const version = process.env.NEXT_PUBLIC_PLEDGE_FRAME_VERSION;
