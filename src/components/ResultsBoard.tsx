@@ -4,6 +4,8 @@ import Image from 'next/image';
 import { useMemo } from 'react';
 import type { PledgeResult } from '@/types';
 
+import { pledgeFrameSrc } from '@/lib/pledgeFrame';
+
 const twitterShareText = encodeURIComponent('I just pledged my loyalty to SentientMaxi. Are you worthy?');
 
 function buildTwitterUrl(result: PledgeResult) {
@@ -40,7 +42,7 @@ function ResultCard({ result, isOwnResult }: ResultCardProps) {
         </div>
 
         <div className="relative aspect-square overflow-hidden rounded-3xl bg-slate-900/80">
-          <Image src="/pledge-frame.png" alt="Sentient pledge frame" fill className="object-cover" sizes="220px" />
+           <Image src={pledgeFrameSrc} alt="Sentient pledge frame" fill className="object-cover" sizes="220px" />
           <div className="absolute left-1/2 top-1/2 h-36 w-36 -translate-x-1/2 -translate-y-1/2 overflow-hidden rounded-2xl border-4 border-white shadow-xl">
             <Image src={result.profile_image_url} alt={`${result.username} composite`} fill className="object-cover" sizes="144px" />
           </div>
