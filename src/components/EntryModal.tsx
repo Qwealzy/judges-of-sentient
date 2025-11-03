@@ -98,7 +98,7 @@ export function EntryModal({ isOpen, isSubmitting, errorMessage, onSubmit }: Ent
         </form>
 
         <div className="relative hidden overflow-hidden rounded-3xl bg-slate-900/90 p-6 text-white shadow-inner shadow-slate-900/40 md:flex md:flex-col md:items-center md:justify-center">
-          <Image src="/pledge-frame.svg" alt="Sentient pledge frame" width={420} height={420} className="w-full max-w-[420px]" priority />
+          <Image src="/pledge-frame.png" alt="Sentient pledge frame" width={420} height={420} className="w-full max-w-[420px]" priority />
           <p className="mt-6 text-center text-sm text-slate-300">
             Replace this artwork with your official Sentient image. Your profile photo will be composited onto the frame.
           </p>
