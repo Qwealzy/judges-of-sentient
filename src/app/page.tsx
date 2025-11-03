@@ -4,10 +4,10 @@ import { useCallback, useEffect, useState } from 'react';
 import { EntryModal, getRandomDescription } from '@/components/EntryModal';
 import { ResultsBoard } from '@/components/ResultsBoard';
 import { getSupabaseClient } from '@/lib/supabaseClient';
-import type { PledgeResult } from '@/types';
+import type { PledgeResult, PledgeInsert } from '@/types';
 
-const TABLE_NAME = 'pledges';
-const STORAGE_BUCKET = 'pledge-avatars';
+const TABLE_NAME = 'pledges' as const;
+const STORAGE_BUCKET = 'pledge-avatars' as const;
 
 export default function HomePage() {
   const [isModalOpen, setIsModalOpen] = useState(true);
@@ -20,15 +20,15 @@ export default function HomePage() {
   const refreshResults = useCallback(async () => {
     try {
       const supabase = getSupabaseClient();
+
       const { data, error } = await supabase
         .from(TABLE_NAME)
         .select('*')
+        .returns<PledgeResult[]>()               // ensure typed array
         .order('created_at', { ascending: false })
         .limit(50);
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
       setOtherResults(data ?? []);
     } catch (error) {
@@ -48,6 +48,8 @@ export default function HomePage() {
 
       try {
         const supabase = getSupabaseClient();
+
+        // --- Upload avatar to Storage
         const extension = avatarFile.name.split('.').pop()?.toLowerCase() ?? 'png';
         const fileName = `${crypto.randomUUID()}.${extension}`;
         const filePath = `${fileName}`;
@@ -56,43 +58,36 @@ export default function HomePage() {
           .from(STORAGE_BUCKET)
           .upload(filePath, avatarFile, {
             cacheControl: '3600',
-            upsert: false
+            upsert: false,
           });
 
-        if (uploadError) {
-          throw uploadError;
-        }
+        if (uploadError) throw uploadError;
 
         const {
-          data: { publicUrl }
+          data: { publicUrl },
         } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(filePath);
 
+        // --- Insert pledge
         const description = getRandomDescription();
+
+        const payload: PledgeInsert = {
+          username,
+          profile_image_url: publicUrl,
+          description,
+        };
 
         const { data, error } = await supabase
           .from(TABLE_NAME)
-          .insert({
-            username,
-            profile_image_url: publicUrl,
-            description
-          })
+          .insert(payload)
           .select()
-          .single();
+          .single(); // inferred as PledgeResult with typed client + literal table
 
-        if (error) {
-          throw error;
-        }
+        if (error) throw error;
+        if (!data) throw new Error('Insert returned no data');
 
-        const newResult: PledgeResult = {
-          id: data.id,
-          username: data.username,
-          profile_image_url: data.profile_image_url,
-          description: data.description,
-          created_at: data.created_at
-        };
-
-        setCurrentResult(newResult);
+        setCurrentResult(data as PledgeResult);
         setIsModalOpen(false);
+
         await refreshResults();
       } catch (error) {
         console.error('Failed to submit pledge', error);
@@ -122,7 +117,12 @@ export default function HomePage() {
         <ResultsBoard currentUserResult={currentResult} others={visibleOthers} />
       </div>
 
-      <EntryModal isOpen={isModalOpen} isSubmitting={isSubmitting} errorMessage={errorMessage} onSubmit={handleSubmit} />
+      <EntryModal
+        isOpen={isModalOpen}
+        isSubmitting={isSubmitting}
+        errorMessage={errorMessage}
+        onSubmit={handleSubmit}
+      />
 
       {!isInitialised ? (
         <div className="fixed inset-0 z-10 flex items-center justify-center bg-white/80 text-slate-500">
