@@ -105,9 +105,16 @@ export function EntryModal({ isOpen, isSubmitting, errorMessage, onSubmit }: Ent
 
         <div className="relative hidden overflow-hidden rounded-[28px] border border-amber-500/30 bg-[#0c0111] p-6 shadow-[0_0_60px_rgba(109,40,217,0.35)] md:flex md:flex-col md:items-center md:justify-center">
             <div className="absolute inset-0 -z-10 bg-[radial-gradient(circle_at_center,_rgba(249,115,22,0.15),_transparent_70%)]" aria-hidden />
-            <div className="flex items-center justify-center rounded-full border border-amber-500/40 bg-black/40 p-6 shadow-inner shadow-purple-900/50">
-              <Image src={pledgeFrameSrc} alt="Sentient pledge frame" width={420} height={420} className="w-full max-w-[360px]" priority />
-            </div>
+          <div className="flex w-full max-w-[360px] items-center justify-center rounded-[24px] border border-amber-500/40 bg-black/40 p-6 shadow-inner shadow-purple-900/50">
+            <Image
+              src={pledgeFrameSrc}
+              alt="Sentient pledge frame"
+              width={360}
+              height={640}
+              className="h-auto w-full object-contain"
+              priority
+            />
+          </div>
         </div>
       </div>
     </div>
