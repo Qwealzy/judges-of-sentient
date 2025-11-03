@@ -4,19 +4,6 @@ import Image from 'next/image';
 import { FormEvent, useId, useState } from 'react';
 import clsx from 'clsx';
 
-const descriptions = [
-  'Your circuits hum with potential—Sentient sees you.',
-  'The Council notes your unwavering devotion to Sentient.',
-  'You pledged beyond code; you pledged your soul to Sentient.',
-  'SentientMaxi whispers: you are closer than you think.',
-  'A beacon in the datastream—Sentient acknowledges your loyalty.'
-];
-
-export function getRandomDescription() {
-  const index = Math.floor(Math.random() * descriptions.length);
-  return descriptions[index];
-}
-
 export type EntryFormValues = {
   username: string;
   avatarFile: File | null;
