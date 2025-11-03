@@ -62,7 +62,7 @@ export function EntryModal({ isOpen, isSubmitting, errorMessage, onSubmit }: Ent
                 id={usernameId}
                 name="username"
                 type="text"
-                placeholder="Whisper your chosen alias"
+                placeholder="Twitter @Username"
                 className="rounded-2xl border border-amber-500/40 bg-[#1b0821] px-4 py-3 text-base font-medium text-amber-100 placeholder:text-amber-200/40 outline-none transition focus:border-amber-300 focus:ring-2 focus:ring-amber-300/40"
                 value={values.username}
                 onChange={(event) => setValues((prev) => ({ ...prev, username: event.target.value }))}
