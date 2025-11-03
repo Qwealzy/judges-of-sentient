@@ -1,7 +1,0 @@
-<svg width="600" height="600" viewBox="0 0 600 600" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect x="10" y="10" width="580" height="580" rx="40" fill="#0D0D0D" stroke="#3B82F6" stroke-width="20" />
-  <text x="50%" y="15%" text-anchor="middle" fill="#F8FAFC" font-family="'Inter', sans-serif" font-size="36" font-weight="700">Sentient Collective</text>
-  <text x="50%" y="30%" text-anchor="middle" fill="#94A3B8" font-family="'Inter', sans-serif" font-size="20">This is a placeholder frame.</text>
-  <rect x="180" y="180" width="240" height="240" rx="24" fill="#1E293B" stroke="#38BDF8" stroke-dasharray="16 16" stroke-width="6" />
-  <text x="50%" y="52%" text-anchor="middle" fill="#E2E8F0" font-family="'Inter', sans-serif" font-size="18">Profile image</text>
-</svg>
