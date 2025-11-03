@@ -10,9 +10,32 @@ export const dynamic = 'force-dynamic';
 const TABLE_NAME = 'pledges';
 const STORAGE_BUCKET = 'pledge-avatars';
 
-type ServiceClient = ReturnType<typeof createClient>;
+type PledgeRow = {
+  id: string;
+  username: string;
+  profile_image_url: string;
+  description: string;
+  created_at: string;
+};
+type PledgeInsert = Pick<PledgeRow, 'username' | 'profile_image_url' | 'description'>;
+type Database = {
+  public: {
+    Tables: {
+      pledges: {
+        Row: PledgeRow;
+        Insert: PledgeInsert;
+        Update: Partial<PledgeInsert>;
+        Relationships: [];
+      };
+    };
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
+    Enums: Record<string, never>;
+    CompositeTypes: Record<string, never>;
+  };
+};
 
-function getServiceClient(): ServiceClient {
+function getServiceClient() {
   const url = process.env.NEXT_PUBLIC_SUPABASE_URL;
   const serviceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
@@ -20,14 +43,34 @@ function getServiceClient(): ServiceClient {
     throw new Error('Supabase credentials are missing. Set NEXT_PUBLIC_SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY.');
   }
 
-  return createClient(url, serviceKey, {
+  return createClient<Database>(url, serviceKey, {
     auth: {
       persistSession: false
     }
   });
 }
 
-function buildResult(payload: any): PledgeResult {
+function isPledgeRow(payload: unknown): payload is PledgeRow {
+  if (typeof payload !== 'object' || payload === null) {
+    return false;
+  }
+
+  const record = payload as Record<string, unknown>;
+
+  return (
+    typeof record.id === 'string' &&
+    typeof record.username === 'string' &&
+    typeof record.profile_image_url === 'string' &&
+    typeof record.description === 'string' &&
+    typeof record.created_at === 'string'
+  );
+}
+
+function buildResult(payload: unknown): PledgeResult {
+  if (!isPledgeRow(payload)) {
+    throw new Error('Supabase returned an invalid pledge payload.');
+  }
+  
   return {
     id: payload.id,
     username: payload.username,
@@ -99,7 +142,7 @@ export async function POST(request: Request) {
 
     const { data, error } = await supabase
       .from(TABLE_NAME)
-      .insert({
+      .insert<PledgeInsert>({
         username,
         profile_image_url: publicUrl,
         description
@@ -111,6 +154,10 @@ export async function POST(request: Request) {
       throw error;
     }
 
+    if (!data) {
+      throw new Error('Supabase did not return the stored pledge.');
+    }
+    
     const result = buildResult(data);
 
     return NextResponse.json({ data: result });
