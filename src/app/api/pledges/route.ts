@@ -70,7 +70,7 @@ function buildResult(payload: unknown): PledgeResult {
   if (!isPledgeRow(payload)) {
     throw new Error('Supabase returned an invalid pledge payload.');
   }
-  
+
   return {
     id: payload.id,
     username: payload.username,
@@ -157,7 +157,7 @@ export async function POST(request: Request) {
     if (!data) {
       throw new Error('Supabase did not return the stored pledge.');
     }
-    
+
     const result = buildResult(data);
 
     return NextResponse.json({ data: result });
