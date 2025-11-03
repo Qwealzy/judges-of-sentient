@@ -1,6 +1,10 @@
 // src/lib/database.types.ts
+
 export type Json =
-  | string | number | boolean | null
+  | string
+  | number
+  | boolean
+  | null
   | { [key: string]: Json | undefined }
   | Json[];
 
@@ -32,9 +36,9 @@ export interface Database {
         Relationships: [];
       };
     };
-    Views: {};
-    Functions: {};
-    Enums: {};
-    CompositeTypes: {};
+    Views: Record<string, never>;
+    Functions: Record<string, never>;
+    Enums: Record<string, never>;
+    CompositeTypes: Record<string, never>;
   };
 }
