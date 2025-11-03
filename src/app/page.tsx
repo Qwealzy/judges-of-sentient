@@ -1,13 +1,9 @@
 'use client';
 
 import { useCallback, useEffect, useState } from 'react';
-import { EntryModal, getRandomDescription } from '@/components/EntryModal';
+import { EntryModal } from '@/components/EntryModal';
 import { ResultsBoard } from '@/components/ResultsBoard';
-import { getSupabaseClient } from '@/lib/supabaseClient';
-import type { PledgeResult, PledgeInsert } from '@/types';
-
-const TABLE_NAME = 'pledges' as const;
-const STORAGE_BUCKET = 'pledge-avatars' as const;
+import type { PledgeResult } from '@/types';
 
 export default function HomePage() {
   const [isModalOpen, setIsModalOpen] = useState(true);
@@ -19,18 +15,15 @@ export default function HomePage() {
 
   const refreshResults = useCallback(async () => {
     try {
-      const supabase = getSupabaseClient();
+      const response = await fetch('/api/pledges', { cache: 'no-store' });
+      const payload: { data?: PledgeResult[]; error?: string } = await response.json();
 
-      const { data, error } = await supabase
-        .from(TABLE_NAME)
-        .select('*')
-        .returns<PledgeResult[]>()               // ensure typed array
-        .order('created_at', { ascending: false })
-        .limit(50);
+      if (!response.ok) {
+        throw new Error(payload.error || 'Failed to fetch pledges');
+      }
 
-      if (error) throw error;
-
-      setOtherResults(data ?? []);
+      setOtherResults(payload.data ?? []);
+      setErrorMessage(undefined);
     } catch (error) {
       console.error('Failed to fetch pledges', error);
       setErrorMessage('We could not contact the Sentient servers. Please try again later.');
@@ -47,51 +40,30 @@ export default function HomePage() {
       setErrorMessage(undefined);
 
       try {
-        const supabase = getSupabaseClient();
+        const formData = new FormData();
+        formData.append('username', username);
+        formData.append('avatar', avatarFile);
 
-        // --- Upload avatar to Storage
-        const extension = avatarFile.name.split('.').pop()?.toLowerCase() ?? 'png';
-        const fileName = `${crypto.randomUUID()}.${extension}`;
-        const filePath = `${fileName}`;
+        const response = await fetch('/api/pledges', {
+          method: 'POST',
+          body: formData
+        });
 
-        const { error: uploadError } = await supabase.storage
-          .from(STORAGE_BUCKET)
-          .upload(filePath, avatarFile, {
-            cacheControl: '3600',
-            upsert: false,
-          });
+        const payload: { data?: PledgeResult; error?: string } | null = await response
+          .json()
+          .catch(() => null);
 
-        if (uploadError) throw uploadError;
+        if (!response.ok || !payload?.data) {
+          const message = payload?.error || 'Submitting to Sentient failed. Double-check your credentials and try again.';
+          throw new Error(message);
+        }
 
-        const {
-          data: { publicUrl },
-        } = supabase.storage.from(STORAGE_BUCKET).getPublicUrl(filePath);
-
-        // --- Insert pledge
-        const description = getRandomDescription();
-
-        const payload: PledgeInsert = {
-          username,
-          profile_image_url: publicUrl,
-          description,
-        };
-
-        const { data, error } = await supabase
-          .from(TABLE_NAME)
-          .insert(payload)
-          .select()
-          .single(); // inferred as PledgeResult with typed client + literal table
-
-        if (error) throw error;
-        if (!data) throw new Error('Insert returned no data');
-
-        setCurrentResult(data as PledgeResult);
+        setCurrentResult(payload.data);
         setIsModalOpen(false);
-
         await refreshResults();
       } catch (error) {
         console.error('Failed to submit pledge', error);
-        setErrorMessage('Submitting to Sentient failed. Double-check your credentials and try again.');
+        setErrorMessage(error instanceof Error ? error.message : 'Submitting to Sentient failed. Double-check your credentials and try again.');
       } finally {
         setIsSubmitting(false);
       }
@@ -116,19 +88,3 @@ export default function HomePage() {
 
         <ResultsBoard currentUserResult={currentResult} others={visibleOthers} />
       </div>
-
-      <EntryModal
-        isOpen={isModalOpen}
-        isSubmitting={isSubmitting}
-        errorMessage={errorMessage}
-        onSubmit={handleSubmit}
-      />
-
-      {!isInitialised ? (
-        <div className="fixed inset-0 z-10 flex items-center justify-center bg-white/80 text-slate-500">
-          Connecting to Sentient…
-        </div>
-      ) : null}
-    </main>
-  );
-}
