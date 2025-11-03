@@ -113,6 +113,7 @@ export function EntryModal({ isOpen, isSubmitting, errorMessage, onSubmit }: Ent
               height={640}
               className="h-auto w-full object-contain"
               priority
+              unoptimized
             />
           </div>
         </div>
