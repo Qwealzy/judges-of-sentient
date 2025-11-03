@@ -1,4 +1,7 @@
-const baseAsset = process.env.NEXT_PUBLIC_PLEDGE_FRAME_ASSET ?? '/pledge-frame.png';
+import type { StaticImageData } from 'next/image';
+import localPledgeFrame from '../../public/pledge-frame.png';
+
+const remoteAsset = process.env.NEXT_PUBLIC_PLEDGE_FRAME_ASSET;
 const version = process.env.NEXT_PUBLIC_PLEDGE_FRAME_VERSION;
 
 function appendCacheBuster(asset: string, cacheKey?: string) {
@@ -10,4 +13,6 @@ function appendCacheBuster(asset: string, cacheKey?: string) {
   return `${asset}${separator}v=${encodeURIComponent(cacheKey)}`;
 }
 
-export const pledgeFrameSrc = appendCacheBuster(baseAsset, version);
+const remotePledgeFrame = remoteAsset ? appendCacheBuster(remoteAsset, version) : undefined;
+
+export const pledgeFrameSrc: string | StaticImageData = remotePledgeFrame ?? (localPledgeFrame as StaticImageData);
