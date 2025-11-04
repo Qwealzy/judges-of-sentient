@@ -99,7 +99,7 @@ const ResultsBoardLayout = ({
                   <div className="rounded-2xl bg-black/60 px-4 py-2 text-sm font-semibold uppercase tracking-[0.35em] text-amber-200/80 shadow-[0_18px_45px_rgba(0,0,0,0.35)]">
                     {dominantResult.username}
                   </div>
-                  <div className="h-32 w-32 overflow-hidden rounded-[28px] border-4 border-amber-200/90 shadow-xl">
+                  <div className="h-32 w-32 overflow-hidden rounded-[18px] border-4 border-amber-200/90 shadow-xl">
                     <Image
                       src={dominantResult.profile_image_url}
                       alt={`${dominantResult.username} avatar`}
@@ -173,7 +173,7 @@ const ResultsBoardLayout = ({
                   <div className="rounded-2xl bg-black/60 px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-amber-200/80">
                     {dominantResult.username}
                   </div>
-                  <div className="h-24 w-24 overflow-hidden rounded-[26px] border-4 border-amber-200/90 shadow-xl">
+                  <div className="h-24 w-24 overflow-hidden rounded-[16px] border-4 border-amber-200/90 shadow-xl">
                     <Image src={dominantResult.profile_image_url} alt={`${dominantResult.username} avatar`} fill className="object-cover" sizes="96px" />
                   </div>
                 </div>
