@@ -44,26 +44,24 @@ type ResultCardProps = {
 
 function ResultCard({ result, isOwnResult }: ResultCardProps) {
   const baseClasses =
-    'flex items-center gap-3 rounded-xl border border-slate-200/70 bg-white/70 p-2 text-left text-sm shadow-sm shadow-slate-900/5 backdrop-blur transition hover:border-slate-300';
+    'flex flex-col items-center gap-3 rounded-xl border border-slate-200/70 bg-white/70 p-4 text-center text-sm shadow-sm shadow-slate-900/5 backdrop-blur transition hover:border-slate-300';
   const highlightedClasses = isOwnResult ? ' ring-2 ring-indigo-500/80' : '';
   
   return (
     <li
       className={`${baseClasses}${highlightedClasses}`}
     >
-      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-amber-200/60 bg-slate-100 shadow">
+      <p className="text-sm font-semibold text-slate-900">{result.username}</p>
+      <div className="relative h-16 w-16 overflow-hidden rounded-3xl border border-amber-200/60 bg-slate-100 shadow">
         <Image
           src={result.profile_image_url}
           alt={`${result.username} avatar`}
           fill
           className="object-cover"
-          sizes="44px"
+          sizes="64px"
         />
       </div>
-    <div className="min-w-0 space-y-0.5">
-        <p className="truncate text-sm font-semibold text-slate-900">{result.username}</p>
-        <p className="text-xs leading-relaxed text-slate-600">{result.description}</p>
-      </div>
+    <p className="text-xs leading-relaxed text-slate-600">{result.description}</p>
     </li>
   );
 }
