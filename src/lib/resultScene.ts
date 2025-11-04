@@ -1,5 +1,4 @@
 import type { StaticImageData } from 'next/image';
-import localResultScene from '@/public/result-scene.png';
 
 const remoteAsset = process.env.NEXT_PUBLIC_RESULT_SCENE_ASSET;
 const version = process.env.NEXT_PUBLIC_RESULT_SCENE_VERSION;
@@ -15,4 +14,6 @@ function appendCacheBuster(asset: string, cacheKey?: string) {
 
 const remoteResultScene = remoteAsset ? appendCacheBuster(remoteAsset, version) : undefined;
 
-export const resultSceneSrc: string | StaticImageData = remoteResultScene ?? (localResultScene as StaticImageData);
+const localResultScene: string | StaticImageData = '/result-scene.png';
+
+export const resultSceneSrc: string | StaticImageData = remoteResultScene ?? localResultScene;
