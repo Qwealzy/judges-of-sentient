@@ -18,7 +18,7 @@ type ImageAsset = string | StaticImageData;
 function buildTwitterUrl(result: PledgeResult) {
   const quoteUrl =
     process.env.NEXT_PUBLIC_SENTIENT_TWEET_URL || process.env.NEXT_PUBLIC_SENTIENT_QUOTE_LINK || 'https://x.com/GGodsonits';
-  const composedText = `${twitterShareText}%0A%0A${encodeURIComponent(result.description)}%0A— ${encodeURIComponent(result.username)}`;
+  const composedText = `${twitterShareText}%0A%0A${encodeURIComponent(`"${result.description}"`)}`;
   return `https://twitter.com/intent/tweet?text=${composedText}&url=${encodeURIComponent(quoteUrl)}`;
 }
 
@@ -89,13 +89,6 @@ const ResultsBoardLayout = ({
 }: ResultsBoardLayoutProps) => {
   return (
     <section className="mx-auto flex w-full max-w-6xl flex-col gap-16 px-4 py-12">
-      <header className="space-y-4 text-center">
-        <h2 className="text-3xl font-semibold text-slate-900">Hall of Worthy SentientMaxis</h2>
-        <p className="text-base text-slate-500">
-          Witness the latest pledges. Your devotion appears first; scroll to explore the rest of the loyal collective.
-        </p>
-      </header>
-
       {dominantResult ? (
         <div className="flex flex-col items-center gap-10">
           <div className="relative hidden aspect-square w-full max-w-[960px] items-center justify-center md:flex">
