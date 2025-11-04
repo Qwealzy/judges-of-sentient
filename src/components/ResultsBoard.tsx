@@ -355,7 +355,6 @@ const ResultsBoardLayout = ({
                   </button>
                 ) : null}
               </div>
-              </div>
             </div>
 
             {rings.map((ring, ringIndex) => {
