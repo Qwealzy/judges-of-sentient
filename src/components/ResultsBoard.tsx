@@ -1,7 +1,7 @@
 'use client';
 
 import Image, { type StaticImageData } from 'next/image';
-import { useCallback, useMemo, useState, type ReactElement } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import type { PledgeResult } from '@/types';
 
 import { resultSceneSrc } from '@/lib/resultScene';
@@ -309,7 +309,7 @@ const ResultsBoardLayout = ({
   isSharing,
   onShare,
   sceneSrc
-}: ResultsBoardLayoutProps): ReactElement => {
+}: ResultsBoardLayoutProps) => {
   return (
     <section className="mx-auto flex w-full max-w-6xl flex-col gap-16 px-4 py-12">
       <header className="space-y-4 text-center">
