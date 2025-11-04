@@ -6,6 +6,13 @@ import clsx from 'clsx';
 
 import { pledgeFrameSrc } from '@/lib/pledgeFrame';
 
+const extractUsernameCore = (input: string) => input.trim().replace(/^@+/, '').trim();
+
+const formatUsername = (input: string) => {
+  const core = extractUsernameCore(input);
+  return core ? `@${core}` : '';
+};
+
 export type EntryFormValues = {
   username: string;
   avatarFile: File | null;
@@ -32,11 +39,13 @@ export function EntryModal({ isOpen, isSubmitting, errorMessage, onSubmit }: Ent
     event.preventDefault();
     setTouched(true);
 
-    if (!values.username.trim() || !values.avatarFile) {
+    const finalUsername = formatUsername(values.username);
+
+    if (!finalUsername || !values.avatarFile) {
       return;
     }
 
-    await onSubmit({ username: values.username.trim(), avatarFile: values.avatarFile });
+    await onSubmit({ username: finalUsername, avatarFile: values.avatarFile });
     setValues({ username: '', avatarFile: null });
     setTouched(false);
   };
@@ -63,10 +72,19 @@ export function EntryModal({ isOpen, isSubmitting, errorMessage, onSubmit }: Ent
                   id={usernameId}
                   name="username"
                   type="text"
-                  placeholder="Whisper your chosen alias"
+                  placeholder="Twitter @Username"
                   className="rounded-2xl border border-amber-500/40 bg-[#1b0821] px-4 py-3 text-base font-medium text-amber-100 placeholder:text-amber-200/40 outline-none transition focus:border-amber-300 focus:ring-2 focus:ring-amber-300/40"
                   value={values.username}
-                  onChange={(event) => setValues((prev) => ({ ...prev, username: event.target.value }))}
+                  onChange={(event) => {
+                    const rawValue = event.target.value;
+                    setValues((prev) => ({
+                      ...prev,
+                      username:
+                        rawValue === ''
+                          ? ''
+                          : `@${rawValue.replace(/^@+/, '')}`,
+                    }));
+                  }}
                 />
               </label>
 
@@ -85,7 +103,7 @@ export function EntryModal({ isOpen, isSubmitting, errorMessage, onSubmit }: Ent
                 />
               </label>
 
-              {touched && (!values.username.trim() || !values.avatarFile) ? (
+              {touched && (extractUsernameCore(values.username) === '' || !values.avatarFile) ? (
                 <p className="text-sm font-medium text-rose-300">The rite requires both a name and a face.</p>
               ) : null}
 
