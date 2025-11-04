@@ -266,11 +266,11 @@ type ResultCardProps = {
 function ResultCard({ result, isOwnResult }: ResultCardProps) {
   return (
     <li
-      className={`flex items-start gap-3 rounded-2xl border border-slate-200/80 bg-white/80 p-3 text-left text-sm shadow-sm shadow-slate-900/5 backdrop-blur transition hover:border-slate-300 hover:shadow-md ${
-        isOwnResult ? 'ring-2 ring-indigo-500' : ''
+      className={`flex items-center gap-3 rounded-xl border border-slate-200/70 bg-white/70 p-2 text-left text-sm shadow-sm shadow-slate-900/5 backdrop-blur transition hover:border-slate-300 ${
+        isOwnResult ? 'ring-2 ring-indigo-500/80' : ''
       }`}
     >
-      <div className="relative h-11 w-11 overflow-hidden rounded-xl border border-amber-200/60 bg-slate-100 shadow">
+      <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-amber-200/60 bg-slate-100 shadow">
         <Image
           src={result.profile_image_url}
           alt={`${result.username} avatar`}
@@ -279,13 +279,9 @@ function ResultCard({ result, isOwnResult }: ResultCardProps) {
           sizes="44px"
         />
       </div>
-    <div className="min-w-0 space-y-1">
-        <p className="text-xs font-semibold uppercase tracking-[0.35em] text-slate-400">Sentient Pledge</p>
-        <p className="text-sm font-semibold text-slate-900">{result.username}</p>
+    <div className="min-w-0 space-y-0.5">
+        <p className="truncate text-sm font-semibold text-slate-900">{result.username}</p>
         <p className="text-xs leading-relaxed text-slate-600">{result.description}</p>
-        {isOwnResult ? (
-          <p className="text-[11px] font-medium text-emerald-600">Sentient acknowledges your ambition first.</p>
-        ) : null}
       </div>
     </li>
   );
@@ -366,23 +362,15 @@ export function ResultsBoard({ currentUserResult, others }: ResultsBoardProps) {
     }
   }, [dominantResult, isSharing, rings, sceneImage, shareUrl]);
 
+  const isOwnDominant = Boolean(currentUserResult && dominantResult && currentUserResult.id === dominantResult.id);
+  
   return (
-    <section className="mx-auto flex w-full max-w-6xl flex-col gap-10 px-4 py-12">
+    <section className="mx-auto flex w-full max-w-6xl flex-col gap-16 px-4 py-12">
       <header className="space-y-4 text-center">
         <h2 className="text-3xl font-semibold text-slate-900">Hall of Worthy SentientMaxis</h2>
         <p className="text-base text-slate-500">
           Witness the latest pledges. Your devotion appears first; scroll to explore the rest of the loyal collective.
         </p>
-        {dominantResult ? (
-          <button
-            type="button"
-            onClick={handleShare}
-            disabled={isSharing}
-            className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30 transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-white disabled:cursor-not-allowed disabled:opacity-70"
-          >
-            {isSharing ? 'Preparing share…' : 'Share your results'}
-          </button>
-        ) : null}
       </header>
 
       {dominantResult ? (
@@ -405,7 +393,22 @@ export function ResultsBoard({ currentUserResult, others }: ResultsBoardProps) {
                     sizes="128px"
                   />
                 </div>
-                <p className="max-w-[420px] text-base font-semibold leading-relaxed text-amber-100">{dominantResult.description}</p>
+              </div>
+              <div className="flex flex-col items-start gap-4">
+                <p className="max-w-[420px] text-base font-semibold leading-relaxed text-amber-100">
+                  {dominantResult.description}
+                </p>
+                {isOwnDominant ? (
+                  <button
+                    type="button"
+                    onClick={handleShare}
+                    disabled={isSharing}
+                    className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-6 py-3 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30 transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:cursor-not-allowed disabled:opacity-70"
+                  >
+                    {isSharing ? 'Preparing share…' : 'Share your results'}
+                  </button>
+                ) : null}
+              </div>
               </div>
             </div>
 
@@ -459,11 +462,24 @@ export function ResultsBoard({ currentUserResult, others }: ResultsBoardProps) {
                 </div>
               </div>
             </div>
+            <div className="flex flex-col gap-3">
+              <p className="text-sm font-semibold leading-relaxed text-amber-100">{dominantResult.description}</p>
+              {isOwnDominant ? (
+                <button
+                  type="button"
+                  onClick={handleShare}
+                  disabled={isSharing}
+                  className="inline-flex items-center justify-center rounded-full bg-indigo-600 px-5 py-2.5 text-sm font-semibold text-white shadow-lg shadow-indigo-600/30 transition hover:bg-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:ring-offset-2 focus:ring-offset-slate-900 disabled:cursor-not-allowed disabled:opacity-70"
+                >
+                  {isSharing ? 'Preparing share…' : 'Share your results'}
+                </button>
+              ) : null}
+            </div>
           </div>
         </div>
       ) : null}
 
-      <ul className="grid gap-3 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
         {orderedResults.map((result, index) => (
           <ResultCard key={result.id} result={result} isOwnResult={dominantResult?.id === result.id && index === 0} />
         ))}
