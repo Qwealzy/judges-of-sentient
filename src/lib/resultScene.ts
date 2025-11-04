@@ -1,5 +1,5 @@
 import type { StaticImageData } from 'next/image';
-import localResultScene from '@/assets/result-scene.png';
+import localResultScene from '@/public/result-scene.png';
 
 const remoteAsset = process.env.NEXT_PUBLIC_RESULT_SCENE_ASSET;
 const version = process.env.NEXT_PUBLIC_RESULT_SCENE_VERSION;
