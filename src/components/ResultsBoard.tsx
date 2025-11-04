@@ -44,24 +44,24 @@ type ResultCardProps = {
 
 function ResultCard({ result, isOwnResult }: ResultCardProps) {
   const baseClasses =
-    'flex flex-col items-center gap-3 rounded-xl border border-slate-200/70 bg-white/70 p-4 text-center text-sm shadow-sm shadow-slate-900/5 backdrop-blur transition hover:border-slate-300';
+    'flex h-full items-start gap-3 rounded-xl border border-slate-200/70 bg-white/80 p-3 text-sm shadow-sm shadow-slate-900/5 backdrop-blur transition hover:border-slate-300 sm:p-4';
   const highlightedClasses = isOwnResult ? ' ring-2 ring-indigo-500/80' : '';
   
   return (
-    <li
-      className={`${baseClasses}${highlightedClasses}`}
-    >
-      <p className="text-sm font-semibold text-slate-900">{result.username}</p>
-      <div className="relative h-16 w-16 overflow-hidden rounded-3xl border border-amber-200/60 bg-slate-100 shadow">
-        <Image
-          src={result.profile_image_url}
-          alt={`${result.username} avatar`}
-          fill
-          className="object-cover"
-          sizes="64px"
-        />
+    <li className={`${baseClasses}${highlightedClasses}`}>
+      <div className="flex shrink-0 flex-col items-center gap-2">
+        <p className="text-xs font-semibold text-slate-900">{result.username}</p>
+        <div className="relative h-16 w-16 overflow-hidden rounded-2xl border border-amber-200/60 bg-slate-100 shadow">
+          <Image
+            src={result.profile_image_url}
+            alt={`${result.username} avatar`}
+            fill
+            className="object-cover"
+            sizes="64px"
+          />
+        </div>
       </div>
-    <p className="text-xs leading-relaxed text-slate-600">{result.description}</p>
+    <p className="flex-1 text-left text-xs leading-relaxed text-slate-600">{result.description}</p>
     </li>
   );
 }
@@ -99,7 +99,7 @@ const ResultsBoardLayout = ({
                   <div className="rounded-2xl bg-black/60 px-4 py-2 text-sm font-semibold uppercase tracking-[0.35em] text-amber-200/80 shadow-[0_18px_45px_rgba(0,0,0,0.35)]">
                     {dominantResult.username}
                   </div>
-                  <div className="h-32 w-32 overflow-hidden rounded-3xl border-4 border-amber-200/90 shadow-xl">
+                  <div className="h-32 w-32 overflow-hidden rounded-[28px] border-4 border-amber-200/90 shadow-xl">
                     <Image
                       src={dominantResult.profile_image_url}
                       alt={`${dominantResult.username} avatar`}
@@ -173,7 +173,7 @@ const ResultsBoardLayout = ({
                   <div className="rounded-2xl bg-black/60 px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-amber-200/80">
                     {dominantResult.username}
                   </div>
-                  <div className="h-24 w-24 overflow-hidden rounded-3xl border-4 border-amber-200/90 shadow-xl">
+                  <div className="h-24 w-24 overflow-hidden rounded-[26px] border-4 border-amber-200/90 shadow-xl">
                     <Image src={dominantResult.profile_image_url} alt={`${dominantResult.username} avatar`} fill className="object-cover" sizes="96px" />
                   </div>
                 </div>
@@ -198,11 +198,11 @@ const ResultsBoardLayout = ({
         </div>
       ) : null}
 
-      <ul className="grid gap-2 sm:grid-cols-2 lg:grid-cols-3">
+      <ul className="grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
         {orderedResults.map((result, index) => (
           <ResultCard key={result.id} result={result} isOwnResult={dominantResult?.id === result.id && index === 0} />
         ))}
-        </ul>
+      </ul>
       {orderedResults.length === 0 ? (
         <p className="text-center text-sm font-medium text-slate-400">
           No pledges yet. Be the first to prove your worthiness.
@@ -218,23 +218,38 @@ type ResultsBoardProps = {
 };
 
 export function ResultsBoard({ currentUserResult, others }: ResultsBoardProps) {
+  const limitedOthers = useMemo(() => {
+    if (others.length <= 30) {
+      return others;
+    }
+
+    const shuffled = [...others];
+    for (let i = shuffled.length - 1; i > 0; i -= 1) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+    }
+
+    return shuffled.slice(0, 30);
+  }, [others]);
+
   const dominantResult = useMemo<PledgeResult | null>(() => {
     if (currentUserResult) {
       return currentUserResult;
     }
 
-    return others[0] ?? null;
-  }, [currentUserResult, others]);
+    return limitedOthers[0] ?? null;
+  }, [currentUserResult, limitedOthers]);
 
   const orbitParticipants = useMemo(() => {
     const skipId = dominantResult?.id;
-    return others.filter((entry) => entry.id !== skipId);
-  }, [dominantResult, others]);
+    return limitedOthers.filter((entry) => entry.id !== skipId);
+  }, [dominantResult, limitedOthers]);
 
   const rings = useMemo(() => partitionRings(orbitParticipants), [orbitParticipants]);
 
   const orderedResults = useMemo(() => {
-    const remainder = orbitParticipants;
+    const allowance = 30 - (dominantResult ? 1 : 0);
+    const remainder = allowance > 0 ? orbitParticipants.slice(0, allowance) : [];
     return dominantResult ? [dominantResult, ...remainder] : remainder;
   }, [dominantResult, orbitParticipants]);
 
