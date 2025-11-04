@@ -66,8 +66,14 @@ function ResultCard({ result, isOwnResult }: ResultCardProps) {
   );
 }
 
+type SceneSubject = {
+  username: string;
+  profile_image_url: string;
+};
+
 type ResultsBoardLayoutProps = {
   dominantResult: PledgeResult | null;
+  sceneSubject: SceneSubject | null;
   rings: PledgeResult[][];
   orderedResults: PledgeResult[];
   isOwnDominant: boolean;
@@ -78,6 +84,7 @@ type ResultsBoardLayoutProps = {
 
 const ResultsBoardLayout = ({
   dominantResult,
+  sceneSubject,
   rings,
   orderedResults,
   isOwnDominant,
@@ -92,28 +99,30 @@ const ResultsBoardLayout = ({
           <div className="relative hidden aspect-square w-full max-w-[960px] items-center justify-center md:flex">
             <div className="absolute inset-0 -z-10 rounded-full bg-gradient-to-br from-indigo-900/40 via-slate-900/30 to-transparent blur-3xl" />
             <div className="relative flex w-[60%] max-w-[620px] flex-col items-start gap-6">
-              <div className="relative aspect-[3/2] w-full overflow-hidden rounded-[36px] border border-amber-500/40 bg-black/40 shadow-[0_25px_80px_rgba(88,28,135,0.35)]">
-                <Image src={sceneSrc} alt="Sentient decree" fill className="object-cover" priority />
-                <div className="absolute inset-0 bg-gradient-to-br from-black/35 via-transparent to-black/55" />
-                <div className="absolute bottom-10 left-12 flex flex-col items-start gap-3">
-                  <div className="rounded-2xl bg-black/60 px-4 py-2 text-sm font-semibold uppercase tracking-[0.35em] text-amber-200/80 shadow-[0_18px_45px_rgba(0,0,0,0.35)]">
-                    {dominantResult.username}
-                  </div>
-                  <div className="absolute bottom-10 left-12 flex flex-col items-start gap-3">
-                    <Image
-                      src={dominantResult.profile_image_url}
-                      alt={`${dominantResult.username} avatar`}
-                      fill
-                      className="object-cover"
-                      sizes="128px"
-                    />
-                  </div>
+                <div className="relative aspect-[3/2] w-full overflow-hidden rounded-[36px] border border-amber-500/40 bg-black/40 shadow-[0_25px_80px_rgba(88,28,135,0.35)]">
+                  <Image src={sceneSrc} alt="Sentient decree" fill className="object-cover" priority />
+                  <div className="absolute inset-0 bg-gradient-to-br from-black/35 via-transparent to-black/55" />
+                  {sceneSubject ? (
+                    <div className="absolute bottom-10 left-12 flex flex-col items-start gap-3">
+                      <div className="rounded-2xl bg-black/60 px-4 py-2 text-sm font-semibold text-amber-200/90 shadow-[0_18px_45px_rgba(0,0,0,0.35)]">
+                        {sceneSubject.username}
+                      </div>
+                      <div className="h-32 w-32 overflow-hidden rounded-[20px] border-4 border-amber-200/90 shadow-xl">
+                        <Image
+                          src={sceneSubject.profile_image_url}
+                          alt={`${sceneSubject.username} avatar`}
+                          fill
+                          className="object-cover"
+                          sizes="128px"
+                        />
+                      </div>
+                    </div>
+                  ) : null}
                 </div>
-              </div>
               <div className="flex w-full flex-col items-center gap-4 text-center">
-                <p className="max-w-[420px] text-base font-semibold leading-relaxed text-black">
-                  {dominantResult.description}
-                </p>
+                  <p className="max-w-[420px] text-base font-semibold leading-relaxed text-black">
+                    {dominantResult.description}
+                  </p>
                 {isOwnDominant ? (
                   <button
                     type="button"
@@ -169,14 +178,16 @@ const ResultsBoardLayout = ({
               <div className="relative aspect-[3/2] w-full overflow-hidden rounded-[24px]">
                 <Image src={sceneSrc} alt="Sentient decree" fill className="object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-br from-black/45 via-transparent to-black/60" />
-                <div className="absolute bottom-4 left-6 flex flex-col items-start gap-2">
-                  <div className="rounded-2xl bg-black/60 px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-amber-200/80">
-                    {dominantResult.username}
+                {sceneSubject ? (
+                  <div className="absolute bottom-4 left-6 flex flex-col items-start gap-2">
+                    <div className="rounded-2xl bg-black/60 px-3 py-1 text-xs font-semibold text-amber-200/90">
+                      {sceneSubject.username}
+                    </div>
+                    <div className="h-24 w-24 overflow-hidden rounded-[18px] border-4 border-amber-200/90 shadow-xl">
+                      <Image src={sceneSubject.profile_image_url} alt={`${sceneSubject.username} avatar`} fill className="object-cover" sizes="96px" />
+                    </div>
                   </div>
-                  <div className="h-24 w-24 overflow-hidden rounded-[18px] border-4 border-amber-200/90 shadow-xl">
-                    <Image src={dominantResult.profile_image_url} alt={`${dominantResult.username} avatar`} fill className="object-cover" sizes="96px" />
-                  </div>
-                </div>
+                ) : null}
               </div>
             </div>
             <div className="flex flex-col items-center gap-3 text-center">
@@ -273,9 +284,28 @@ export function ResultsBoard({ currentUserResult, others }: ResultsBoardProps) {
 
   const isOwnDominant = Boolean(currentUserResult && dominantResult && currentUserResult.id === dominantResult.id);
 
+  const sceneSubject = useMemo<SceneSubject | null>(() => {
+    if (currentUserResult) {
+      return {
+        username: currentUserResult.username,
+        profile_image_url: currentUserResult.profile_image_url
+      };
+    }
+
+    if (dominantResult) {
+      return {
+        username: dominantResult.username,
+        profile_image_url: dominantResult.profile_image_url
+      };
+    }
+
+    return null;
+  }, [currentUserResult, dominantResult]);
+  
   return (
     <ResultsBoardLayout
       dominantResult={dominantResult}
+      sceneSubject={sceneSubject}
       rings={rings}
       orderedResults={orderedResults}
       isOwnDominant={isOwnDominant}
