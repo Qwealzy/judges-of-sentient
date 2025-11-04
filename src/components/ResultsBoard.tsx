@@ -95,11 +95,11 @@ const ResultsBoardLayout = ({
               <div className="relative aspect-[3/2] w-full overflow-hidden rounded-[36px] border border-amber-500/40 bg-black/40 shadow-[0_25px_80px_rgba(88,28,135,0.35)]">
                 <Image src={sceneSrc} alt="Sentient decree" fill className="object-cover" priority />
                 <div className="absolute inset-0 bg-gradient-to-br from-black/35 via-transparent to-black/55" />
-                <div className="absolute inset-x-12 bottom-10 flex flex-col items-center gap-4">
+                <div className="absolute bottom-10 left-12 flex flex-col items-start gap-3">
                   <div className="rounded-2xl bg-black/60 px-4 py-2 text-sm font-semibold uppercase tracking-[0.35em] text-amber-200/80 shadow-[0_18px_45px_rgba(0,0,0,0.35)]">
                     {dominantResult.username}
                   </div>
-                  <div className="mx-auto h-32 w-32 overflow-hidden rounded-[20px] border-4 border-amber-200/90 shadow-xl">
+                  <div className="absolute bottom-10 left-12 flex flex-col items-start gap-3">
                     <Image
                       src={dominantResult.profile_image_url}
                       alt={`${dominantResult.username} avatar`}
@@ -169,11 +169,11 @@ const ResultsBoardLayout = ({
               <div className="relative aspect-[3/2] w-full overflow-hidden rounded-[24px]">
                 <Image src={sceneSrc} alt="Sentient decree" fill className="object-cover" />
                 <div className="absolute inset-0 bg-gradient-to-br from-black/45 via-transparent to-black/60" />
-                <div className="mx-auto h-32 w-32 overflow-hidden rounded-[20px] border-4 border-amber-200/90 shadow-xl">
+                <div className="absolute bottom-4 left-6 flex flex-col items-start gap-2">
                   <div className="rounded-2xl bg-black/60 px-3 py-1 text-xs font-semibold uppercase tracking-[0.3em] text-amber-200/80">
                     {dominantResult.username}
                   </div>
-                  <div className="mx-auto h-24 w-24 overflow-hidden rounded-[18px] border-4 border-amber-200/90 shadow-xl">
+                  <div className="h-24 w-24 overflow-hidden rounded-[18px] border-4 border-amber-200/90 shadow-xl">
                     <Image src={dominantResult.profile_image_url} alt={`${dominantResult.username} avatar`} fill className="object-cover" sizes="96px" />
                   </div>
                 </div>
