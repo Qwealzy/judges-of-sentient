@@ -264,11 +264,13 @@ type ResultCardProps = {
 };
 
 function ResultCard({ result, isOwnResult }: ResultCardProps) {
+  const baseClasses =
+    'flex items-center gap-3 rounded-xl border border-slate-200/70 bg-white/70 p-2 text-left text-sm shadow-sm shadow-slate-900/5 backdrop-blur transition hover:border-slate-300';
+  const highlightedClasses = isOwnResult ? ' ring-2 ring-indigo-500/80' : '';
+  
   return (
     <li
-      className={`flex items-center gap-3 rounded-xl border border-slate-200/70 bg-white/70 p-2 text-left text-sm shadow-sm shadow-slate-900/5 backdrop-blur transition hover:border-slate-300 ${
-        isOwnResult ? 'ring-2 ring-indigo-500/80' : ''
-      }`}
+      className={`${baseClasses}${highlightedClasses}`}
     >
       <div className="relative h-10 w-10 shrink-0 overflow-hidden rounded-lg border border-amber-200/60 bg-slate-100 shadow">
         <Image
