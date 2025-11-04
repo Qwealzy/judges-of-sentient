@@ -366,7 +366,7 @@ export function ResultsBoard({ currentUserResult, others }: ResultsBoardProps) {
 
   const isOwnDominant = Boolean(currentUserResult && dominantResult && currentUserResult.id === dominantResult.id);
   
-  return (
+  const content = (
     <section className="mx-auto flex w-full max-w-6xl flex-col gap-16 px-4 py-12">
       <header className="space-y-4 text-center">
         <h2 className="text-3xl font-semibold text-slate-900">Hall of Worthy SentientMaxis</h2>
@@ -493,4 +493,6 @@ export function ResultsBoard({ currentUserResult, others }: ResultsBoardProps) {
       ) : null}
     </section>
   );
+      
+  return content;
 }
